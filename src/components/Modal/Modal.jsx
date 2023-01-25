@@ -1,36 +1,32 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 import { PropTypes } from 'prop-types';
 import css from './modal.module.css';
 
-class Modal extends Component {
-  render() {
-    return (
-      <div id="modal" onClick={this.props.onClickClose} className={css.Overlay}>
-        <div className={css.Modal}>
-          <img
-            className={css.Largeimg}
-            src={this.props.largeImageUrl}
-            alt={this.props.id}
-          />
-        </div>
+const Modal = props => {
+  useEffect(() => {
+    const handleKeyPress = event => {
+      if (event.keyCode === 27) {
+        props.onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+    return () => {
+      document.addEventListener('keydown', handleKeyPress);
+    };
+  }, [props]);
+  return (
+    <div id="modal" onClick={props.onClickClose} className={css.Overlay}>
+      <div className={css.Modal}>
+        <img
+          className={css.Largeimg}
+          src={props.largeImageUrl}
+          alt={props.id}
+        />
       </div>
-    );
-  }
-
-  componentDidMount() {
-    document.addEventListener('keydown', this.handleKeyPress);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyPress);
-  }
-
-  handleKeyPress = event => {
-    if (event.keyCode === 27) {
-      this.props.onClose();
-    }
-  };
-}
+    </div>
+  );
+};
 
 Modal.propTypes = {
   onClickClose: PropTypes.func.isRequired,
